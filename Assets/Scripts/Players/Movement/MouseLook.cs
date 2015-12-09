@@ -26,6 +26,7 @@ public class MouseLook : MonoBehaviour {
     // Use this for initialization
     void Awake () {
         character = transform.parent;
+		Cursor.visible = false;
 	}
 	
 	// Update is called once per frame

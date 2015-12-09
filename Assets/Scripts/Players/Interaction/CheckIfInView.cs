@@ -9,4 +9,9 @@ public class CheckIfInView : MonoBehaviour {
         if (GeometryUtility.TestPlanesAABB(planes, GetComponent<Renderer>().bounds)) Debug.Log("Object inside frustum");
         else Debug.Log("Object not visible");
     }
+
+	protected virtual void InView()
+	{
+
+	}
 }
