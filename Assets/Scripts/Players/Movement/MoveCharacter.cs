@@ -9,7 +9,13 @@ public class MoveCharacter : MonoBehaviour {
     private float jumpSpeed = 1.5f;
 
     [SerializeField]
-    private float maxFallDistance = 1.5f;
+    private float maxFallTime = 1500f;
+
+    [SerializeField]
+    private float fallingHitGroundSpeedVelocity = 15f;
+
+    [SerializeField]
+    private float shakeTreshold = 0.4f;
 
     [SerializeField]
     private float shakeAmount;
@@ -23,17 +29,20 @@ public class MoveCharacter : MonoBehaviour {
     private float hitGroundSpeedVelocity;
 
     [SerializeField]
-    public float gravity = 0.001f;
+    private float gravity = 0.001f;
 
     private Vector3 moveDirection;
-
-    CharacterController character;
 
     [SerializeField]
     private Camera[] cameras;
 
+    CharacterController character;
+
+    Noise noise;
+
     void Awake() {
         character = GetComponent<CharacterController>();
+        noise = GetComponent<Noise>();
     }
 
     void FixedUpdate()
@@ -41,15 +50,26 @@ public class MoveCharacter : MonoBehaviour {
         if(!character.isGrounded) //in the air
         {
             moveDirection.y -= gravity;
-            hitGroundSpeedVelocity += 0.01f;
+            hitGroundSpeedVelocity += 1f;
         } else { //not in the air
-            if (hitGroundSpeedVelocity > 0.05f) //just landed
+            if (hitGroundSpeedVelocity > fallingHitGroundSpeedVelocity) //just landed
             {
                 foreach (Camera camera in cameras) camera.GetComponent<CameraShake>().startCamShake(shakeAmount * afterLandCameraShakeMultiply, shakeSpeed);
-                if (hitGroundSpeedVelocity > maxFallDistance) Destroy(this.gameObject);
+                noise.NoiseArea(8);
+                // the higher hitGroundSpeedVelocity is, the longer high that means 
+                if (hitGroundSpeedVelocity > maxFallTime) Destroy(this.gameObject);
             } else { // already landed
                 if (Input.GetButton("Jump")) moveDirection.y = jumpSpeed;
-                else if (Mathf.Abs(Input.GetAxis("Horizontal")) > 0.6f || Mathf.Abs(Input.GetAxis("Vertical")) > 0.6f) foreach (Camera camera in cameras) camera.GetComponent<CameraShake>().startCamShake(shakeAmount, shakeSpeed);
+
+                //if you didnt jump and the positive value of horizontal or vertical input is higher than the shakeTreshold, shake each camera  this object.
+                else if (Mathf.Abs(Input.GetAxis("Horizontal")) > shakeTreshold || Mathf.Abs(Input.GetAxis("Vertical")) > shakeTreshold)
+                {
+                    foreach (Camera camera in cameras)
+                    {
+                        camera.GetComponent<CameraShake>().startCamShake(shakeAmount, shakeSpeed);
+                    }
+                }
+                //move using the Horizontal or Vertical values of input and multiplying them by speed
                 moveDirection = transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), moveDirection.y, Input.GetAxis("Vertical"))) * speed;
             }
             hitGroundSpeedVelocity = 0;

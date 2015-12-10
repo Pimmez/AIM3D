@@ -1,89 +1,108 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class GoToPointSmooth : MonoBehaviour
 {
+    [SerializeField]
+    private float maxSpeed = 0.03f;
+
+    /** The heavyier the object, the more momentum it has while steering */
+    [SerializeField]
+    private float mass = 100;
+
+    /** the boolean to check if the obj needs to look the directions it is moving */
+    [SerializeField]
+    private bool rotateToDirection = true;
+
+    /** the boolean to check if we need to follow the waypoints, of if another is going to move this object */
+    [SerializeField]
+    private bool patrolling = true;
 
     [SerializeField]
-    private float maxSpeed = 5;
+    private float minDistanceToPoint = 1;
 
-    /** hoe zwaarder het object, hoe slechter hij kan bijsturen */
-    [SerializeField]
-    private float mass = 20;
-
-    /** boolean of het object de richting op kijkt waar we naar toe bewegen */
-    [SerializeField]
-    private bool followPath = false;
-
-    /** Vector om onze huidige velocity bij te houden (x en y stap) */
+    /** Vector to save the current velocity, X & Z */
     private Vector3 currentVelocity;
-    /** Vector om onze huidige positie bij te houden (x en y positie) */
+    /** Vector to save the current position, X & Z */
     private Vector3 currentPosition;
     /** Vector om de locatie bij te houden waar we heen willen */
-    private Vector3 currentTarget;
+    /** Vector to save the position of the current target*/
+    private Vector3 currentPoint;
 
     void Start()
     {
         // we starten zonder beweging (geen velocity)
         currentVelocity = new Vector3();
-        // we nemen de huidige positie over in een eigen variabele
+        // Assign currentPosition to the start position of this object
         currentPosition = transform.position;
     }
 
-    // Elke frametick kijken we hoe we moeten sturen
+    // Seek every frame, to see if we need to adjust our movement
     void Update()
     {
-        Seek();
+        if (patrolling) Seek();
     }
 
-    public void setTarget(Vector3 target)
+    public void setPatrolling(bool _patrolState)
     {
-        currentTarget = target;
+        patrolling = _patrolState;
     }
 
-    // van buitenaf kun je de huidige target uitlezen
-    public Vector3 Target
+    public bool Patrolling
     {
-        get
-        {
-            return currentTarget;
-        }
+        get { return patrolling; }
+    }
+
+    public void setPoint(Vector3 point)
+    {
+        currentPoint = point;
+    }
+
+    // Get the target V3 from another script
+    public Vector3 Point
+    {
+        get { return currentPoint; }
+    }
+
+    public void UpdatePostion()
+    {
+        currentPosition = transform.position;
     }
 
     void Seek()
     {
+        // Calculate the distance from our current position to our current target
+        Vector3 desiredStep = currentPoint - currentPosition;
 
-        // we berekenen eerst de afstand/Vector tot de 'target' (in dit voorbeeld het mikpunt)		
-        Vector3 desiredStep = currentTarget - currentPosition;
-
-        // deze desiredStep mag niet groter zijn dan de maximale Speed
-        //
-        // als een vector ge'normalized' is .. dan houdt hij dezelfde richting
-        // maar zijn lengte/magnitude is 1
+        // DisiredStep cant be bigger than the maximal speed
+        // If the vector is normalized, it keeps the same direction but the length/magnitude is 1
         desiredStep.Normalize();
 
-        // als je deze genormaliseerde vector weer vermenigvuldigt met de maximale snelheid dan
-        // wordt de lengte van deze Vector maxSpeed (aangezien 1 x maxSpeed = maxSpeed)
-        // de x en y van deze Vector wordt zo vanzelf omgerekend
+        // Multiply the desiredStep by maxSpeed and save it as desiredVelocity
         Vector3 desiredVelocity = desiredStep * maxSpeed;
 
-        // bereken wat de Vector moet zijn om bij te sturen om bij de desiredVelocity te komen
+        // Calculate what the vector must be to adjust the direction and reach disiredVelocity
         Vector3 steeringForce = desiredVelocity - currentVelocity;
 
-        // uiteindelijk voegen we de steering force toe maar wel gedeeld door de 'mass'
-        // hierdoor gaat hij niet in een rechte lijn naar de target
-        // hoe zwaarder het object des te groter de bocht
+        // increment the currentVelocity by the steering force, but first divide it by mass, so the bigger the mass, the lower the steeringforce
         currentVelocity += steeringForce / mass;
 
-        // Als laatste updaten we de positie door daar onze beweging (velocity) bij op te tellen
+        // Update our actual position by incrementing it with our velocity
         currentPosition += currentVelocity * Time.deltaTime;
         transform.position = currentPosition;
 
-        // roteer het object in de goede richting
-        if (followPath)
+        // adjust the rotation to the movement, if needed.
+        if (rotateToDirection)
         {
-            float angle = Mathf.Atan2(currentVelocity.y, currentVelocity.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            float angle = Mathf.Atan2(currentVelocity.z, currentVelocity.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.down);
         }
+    }
+
+    //checks if the distance between this object and the currentPoint is lower then minDistanceToPoint
+    public bool CheckDistanceToPoint()
+    {
+        //check if the distance is lower than the minimal distance to the point
+        if (Vector3.Distance(transform.position, currentPoint) < minDistanceToPoint) return true;
+        else return false;
     }
 }
