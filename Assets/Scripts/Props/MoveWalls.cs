@@ -3,30 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class MoveWalls : MonoBehaviour {
-	/*
+
 	[SerializeField]
-	private Vector3 endPos;
+	private Transform endPos;
 	[SerializeField]
 	private float smoothTime = 0f;
-	private GameObject gameobject;
+	[SerializeField]
+	private GameObject obj;
 
-	void  Start ()
+	void Awake ()
 	{
-		gameobject = this.gameobject;
-		StartCoroutine (moveWalls(5f));	
-
+		StartCoroutine (moveWalls(endPos.position));	
 	}
 
-	IEnumerator moveWalls(float waitTime)
+	IEnumerator moveWalls(Vector3 goal)
 	{
-		Vector3 velocity = new Vector3 ();
-		while (gameobject.transform.position > 0.5f) 
+		Vector3 velocity = new Vector3();
+		while (Vector3.Distance(goal, obj.transform.position) > 0.5f) 
 		{
 			//Vector3 SmoothDamp(currentPos, endPos, ref Vector3 currentVelocity, smoothTime);
-			transform.position = Vector3.SmoothDamp(gameobject.transform.position, endPos, ref velocity, smoothTime * Time.deltaTime);
+			transform.position = Vector3.SmoothDamp (obj.transform.position, goal, ref velocity, smoothTime);
+			yield return new WaitForFixedUpdate ();
 		}
-
-		yield return new WaitForSeconds (waitTime);
-	}
-*/
+	} 
 }
