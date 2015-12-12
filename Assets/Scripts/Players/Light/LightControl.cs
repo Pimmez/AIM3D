@@ -26,22 +26,29 @@ public class LightControl : MonoBehaviour
 
     private ObjectState objState;
 
+    private Noise noise;
+
     private bool canSwitch = true;
 
+    [SerializeField]
+    private int lightSwitchSoundStrength = 13;
+
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         if (lightObj == null) print("Assign Lightobject!");
         //the script that manages active state of the light.
         objState = GetComponent<ObjectState>();
         objState.Obj = lightObj;
-        StartCoroutine(ChangeLightRange(minRange));
+
+        noise = GetComponentInParent<Noise>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (canSwitch && Input.GetButtonDown("Light"))
+        //if we can switch the light and we pressed the button
+        if (Input.GetButtonDown("Light") && canSwitch)
         {
             //set the range to min range, if the obj is not active yet, we change it to max range.
             float range = minRange;
@@ -49,6 +56,9 @@ public class LightControl : MonoBehaviour
 
             //the lights are being activated or deactivated in this coroutine.
             StartCoroutine(ChangeLightRange(range));
+
+            //make some noise for the enemy to hear
+            noise.NoiseArea(lightSwitchSoundStrength);
         }
         else if (objState.Active)//when the light is on (active) it has a chance to flicker.
         {

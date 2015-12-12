@@ -38,6 +38,9 @@ public class MoveCharacter : MonoBehaviour {
 
     CharacterController character;
 
+    [SerializeField]
+    private int jumpSoundStrength = 15;
+
     Noise noise;
 
     void Awake() {
@@ -55,7 +58,7 @@ public class MoveCharacter : MonoBehaviour {
             if (hitGroundSpeedVelocity > fallingHitGroundSpeedVelocity) //just landed
             {
                 foreach (Camera camera in cameras) camera.GetComponent<CameraShake>().startCamShake(shakeAmount * afterLandCameraShakeMultiply, shakeSpeed);
-                noise.NoiseArea(8);
+                noise.NoiseArea(jumpSoundStrength);
                 // the higher hitGroundSpeedVelocity is, the longer high that means 
                 if (hitGroundSpeedVelocity > maxFallTime) Destroy(this.gameObject);
             } else { // already landed

@@ -23,7 +23,7 @@ public class FollowTarget : CheckForTarget {
         agent.speed = followSpeed;
 
         //start with the navmesh inactive
-        agent.Stop();
+        agent.enabled = false;
 
         goToPointSmooth = GetComponent<GoToPointSmooth>();
     }
@@ -38,11 +38,11 @@ public class FollowTarget : CheckForTarget {
         //set seetarget true, so the target transform updates as long as see target is true
         seeTarget = true;
 
+        //follow the target
+        agent.enabled = true;
+
         //stop the coroutine that updates the target position in the navmesh
         StartCoroutine(UpdateTargetTranformInNavmesh(_targetTransform));
-
-        //follow the target
-        agent.Resume();
     }
 
     protected override void LoseCurrentTarget()
@@ -69,8 +69,6 @@ public class FollowTarget : CheckForTarget {
             //set the new position of the target
             agent.destination = _targetTransform.position;
 
-            //set the rotation to the target
-            transform.LookAt(_targetTransform);
             yield return new WaitForFixedUpdate();
         }
     }
@@ -84,7 +82,7 @@ public class FollowTarget : CheckForTarget {
         }
 
         //stop the navmesh
-        agent.Stop();
+        agent.enabled = false;
 
         //update the position value of the position it is now;
         goToPointSmooth.UpdatePostion();
