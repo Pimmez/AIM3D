@@ -1,12 +1,9 @@
 ﻿using UnityEngine;
 
-public class CheckForTarget : MonoBehaviour
+public class CheckForTarget : WaitForCheck
 {
     //[SerializeField]
     //protected LayerMask checkLayer; //which layer we checks
-
-    [SerializeField]
-    protected float checkCooldown; // how often i check if i see an enemy
 
     [SerializeField]
     private float seeRange; // how far i can spot the target
@@ -23,14 +20,13 @@ public class CheckForTarget : MonoBehaviour
 
     // we dont do a raycast check for the target if targetInRange is false,
     // but we still want to count the time we havent seen the player 
-    private bool targetInRange; 
+    private bool targetInRange;
 
-    void Awake() {
+    protected override void Awake()
+    {
+        base.Awake();
         //adjust outofsight time to the ckeckcooldown
         outOfSightTime *= checkCooldown;
-
-        //repeatedly check if we can see the enemy
-        InvokeRepeating("CheckSight", 0, checkCooldown);
     }
 
     void OnTriggerStay(Collider other) {
@@ -40,8 +36,9 @@ public class CheckForTarget : MonoBehaviour
             target = other.gameObject;
 
             //add myself to the target noise list (the targets sound can now reach me)
-            other.GetComponent<Noise>().enemiesThatCanHearMe.Add(gameObject);
+            other.GetComponentInParent<Noise>().enemiesThatCanHearMe.Add(gameObject);
 
+            //start checking sight for the target.
             targetInRange = true;
         }
     }
@@ -50,14 +47,17 @@ public class CheckForTarget : MonoBehaviour
         if (other.CompareTag("Player") && targetInRange)
         {
             // remove myself from the targets noise list (the targets sound can no longer reach me)
-            other.GetComponent<Noise>().enemiesThatCanHearMe.Remove(gameObject);
+            other.GetComponentInParent<Noise>().enemiesThatCanHearMe.Remove(gameObject);
 
+            //stop checking the sight for the target until the he is in our range again, we keep following until the outOfSightTime is over.
             targetInRange = false;
         }
     }
 
-    void CheckSight()
+    protected override void Check()
     {
+        base.Check();
+
         // start with seetarget false, becomes true if we see the player
         bool seeTarget = false;
 
@@ -101,7 +101,7 @@ public class CheckForTarget : MonoBehaviour
         outOfSightTime = 0;
     }
 
-    protected virtual void LoseCurrentTarget() {
+    public virtual void LoseCurrentTarget() {
 
     }
 

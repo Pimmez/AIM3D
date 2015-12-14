@@ -45,7 +45,7 @@ public class FollowTarget : CheckForTarget {
         StartCoroutine(UpdateTargetTranformInNavmesh(_targetTransform));
     }
 
-    protected override void LoseCurrentTarget()
+    public override void LoseCurrentTarget()
     {
         base.LoseCurrentTarget();
 

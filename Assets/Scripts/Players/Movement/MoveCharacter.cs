@@ -53,14 +53,18 @@ public class MoveCharacter : MonoBehaviour {
         if(!character.isGrounded) //in the air
         {
             moveDirection.y -= gravity;
+
             hitGroundSpeedVelocity += 1f;
         } else { //not in the air
             if (hitGroundSpeedVelocity > fallingHitGroundSpeedVelocity) //just landed
             {
                 foreach (Camera camera in cameras) camera.GetComponent<CameraShake>().startCamShake(shakeAmount * afterLandCameraShakeMultiply, shakeSpeed);
+
                 noise.NoiseArea(jumpSoundStrength);
+
                 // the higher hitGroundSpeedVelocity is, the longer high that means 
                 if (hitGroundSpeedVelocity > maxFallTime) Destroy(this.gameObject);
+
             } else { // already landed
                 if (Input.GetButton("Jump")) moveDirection.y = jumpSpeed;
 
@@ -72,6 +76,7 @@ public class MoveCharacter : MonoBehaviour {
                         camera.GetComponent<CameraShake>().startCamShake(shakeAmount, shakeSpeed);
                     }
                 }
+
                 //move using the Horizontal or Vertical values of input and multiplying them by speed
                 moveDirection = transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), moveDirection.y, Input.GetAxis("Vertical"))) * speed;
             }
