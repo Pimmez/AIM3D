@@ -1,0 +1,168 @@
+fileFormatVersion: 2
+guid: 285d608cd3cd93240bdb6de3943eee46
+timeCreated: 1450187106
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: back
+    100002: bottom
+    100004: chest_ctrl
+    100006: group
+    100008: head
+    100010: head_ctrl
+    100012: head_end
+    100014: hip_ctrl
+    100016: imagePlane1
+    100018: imagePlane2
+    100020: l_arm_ctrl
+    100022: l_arm_ctrl1
+    100024: l_arm_ik
+    100026: l_collar
+    100028: l_fingers
+    100030: l_foot
+    100032: l_hand
+    100034: l_knee
+    100036: l_leg
+    100038: l_leg_ctrl
+    100040: l_leg_ik
+    100042: l_lwr_arm
+    100044: l_toes
+    100046: l_upr_arm
+    100048: left
+    100050: neck
+    100052: pelvis
+    100054: r_arm_ik
+    100056: r_collar
+    100058: r_fingers
+    100060: r_foot
+    100062: r_hand
+    100064: r_knee
+    100066: r_leg_ctrl
+    100068: r_leg_ik
+    100070: r_lwr_arm
+    100072: r_reg
+    100074: r_toes
+    100076: r_upr_arm
+    100078: spine_02
+    100080: spine_04
+    100082: spine_3
+    100084: spine_ik
+    100086: spine_ik_curve
+    100088: spine_o1
+    100090: //RootNode
+    100092: Voodoo_Doll1
+    400000: back
+    400002: bottom
+    400004: chest_ctrl
+    400006: group
+    400008: head
+    400010: head_ctrl
+    400012: head_end
+    400014: hip_ctrl
+    400016: imagePlane1
+    400018: imagePlane2
+    400020: l_arm_ctrl
+    400022: l_arm_ctrl1
+    400024: l_arm_ik
+    400026: l_collar
+    400028: l_fingers
+    400030: l_foot
+    400032: l_hand
+    400034: l_knee
+    400036: l_leg
+    400038: l_leg_ctrl
+    400040: l_leg_ik
+    400042: l_lwr_arm
+    400044: l_toes
+    400046: l_upr_arm
+    400048: left
+    400050: neck
+    400052: pelvis
+    400054: r_arm_ik
+    400056: r_collar
+    400058: r_fingers
+    400060: r_foot
+    400062: r_hand
+    400064: r_knee
+    400066: r_leg_ctrl
+    400068: r_leg_ik
+    400070: r_lwr_arm
+    400072: r_reg
+    400074: r_toes
+    400076: r_upr_arm
+    400078: spine_02
+    400080: spine_04
+    400082: spine_3
+    400084: spine_ik
+    400086: spine_ik_curve
+    400088: spine_o1
+    400090: //RootNode
+    400092: Voodoo_Doll1
+    4300000: Voodoo_Doll1
+    9500000: //RootNode
+    13700000: Voodoo_Doll1
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 100
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

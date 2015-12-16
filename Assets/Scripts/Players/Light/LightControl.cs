@@ -7,7 +7,7 @@ public class LightControl : MonoBehaviour
     private GameObject lightObj;
 
     [SerializeField]
-    private float changeToFlickker;
+    private float changeToFlicker;
 
     [SerializeField]
     private int maxFlickerTimes;
@@ -24,7 +24,7 @@ public class LightControl : MonoBehaviour
     [SerializeField]
     private float rangeChange;
 
-    private ObjectState objState;
+    private ObjectActiveState objActiveState;
 
     private Noise noise;
 
@@ -34,12 +34,12 @@ public class LightControl : MonoBehaviour
     private int lightSwitchSoundStrength = 13;
 
     // Use this for initialization
-    void Awake()
+    protected virtual void Awake()
     {
         if (lightObj == null) print("Assign Lightobject!");
         //the script that manages active state of the light.
-        objState = GetComponent<ObjectState>();
-        objState.Obj = lightObj;
+        objActiveState = GetComponent<ObjectActiveState>();
+        objActiveState.AddObjectToMakeInactive(lightObj);
 
         noise = GetComponentInParent<Noise>();
     }
@@ -52,18 +52,18 @@ public class LightControl : MonoBehaviour
         {
             //set the range to min range, if the obj is not active yet, we change it to max range.
             float range = minRange;
-            if (!objState.Active) range = maxRange;
+            if (!objActiveState.Active) range = maxRange;
 
             //the lights are being activated or deactivated in this coroutine.
-            StartCoroutine(ChangeLightRange(range));
+            StartCoroutine(ChangeLightRange(range, rangeChange));
 
             //make some noise for the enemy to hear
             noise.NoiseArea(lightSwitchSoundStrength);
         }
-        else if (objState.Active)//when the light is on (active) it has a chance to flicker.
+        else if (objActiveState.Active)//when the light is on (active) it has a chance to flicker.
         {
             //the chance to flicker is dependend on the amount of mana (the more mana the smaller the chance).
-            if (Random.Range(0, 0.99f) < (changeToFlickker)) StartCoroutine(Flicker());
+            if (Random.Range(0, 0.99f) < (changeToFlicker)) StartCoroutine(Flicker());
         }
     }
 
@@ -81,7 +81,7 @@ public class LightControl : MonoBehaviour
             for (int s = 0; s < 2; s++)
             {
                 //switch light
-                objState.SwitchState();
+                objActiveState.SwitchState();
 
                 //also adds a very short random pause between switching
                 //except if this is the very last flicker and the light remains on anyway, there wont be any need to add a pause then.
@@ -102,7 +102,7 @@ public class LightControl : MonoBehaviour
         canSwitch = true;
     }
 
-    private IEnumerator ChangeLightRange(float _targetRange)
+    private IEnumerator ChangeLightRange(float _targetRange, float _rangeChangeSpeed)
     {
         Light plrLight = lightObj.GetComponent<Light>();
 
@@ -110,17 +110,21 @@ public class LightControl : MonoBehaviour
         if (_targetRange == maxRange)
         {
             plrLight.range = minRange;
-            objState.SetState(true);
+            SwitchLight(true);
         }
 
         //change the range gradually to the target range
         while ((int)plrLight.range != _targetRange)
         {
-            plrLight.range = Mathf.MoveTowards(plrLight.range, _targetRange, rangeChange);
+            plrLight.range = Mathf.MoveTowards(plrLight.range, _targetRange, _rangeChangeSpeed);
             yield return new WaitForFixedUpdate();
         }
 
         //if the targetrange is the same as min range, then we know the light is being deactivated and we need to change it after we decremented the range.
-        if (_targetRange == minRange) objState.SetState(false);
+        if (_targetRange == minRange) SwitchLight(false);
+    }
+
+    protected virtual void SwitchLight(bool _lightState) {
+        objActiveState.SetState(_lightState);
     }
 }

@@ -1,35 +1,55 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class MoveCharacter : MonoBehaviour {
 
     [SerializeField]
-    private float speed = 0.1f;
+    private float baseSpeed = 2.7f;
 
     [SerializeField]
-    private float jumpSpeed = 1.5f;
+    private float runSpeedMultiply = 1.5f;
+
+    [SerializeField]
+    private float crouchSpeedMultiply = 0.5f;
+
+    [SerializeField]
+    private float resizeYSpeed = 0.1f;
+
+    private float resizeYVelocity;
+
+    private bool crouching;
+
+    [SerializeField]
+    private float standingSizeY = 1;
+
+    [SerializeField]
+    private float crouchingSpeedMultiplier = 0.66f;
+
+    [SerializeField]
+    private float jumpSpeed = 6;
 
     [SerializeField]
     private float maxFallTime = 1500f;
 
     [SerializeField]
-    private float fallingHitGroundSpeedVelocity = 15f;
+    private float fallingHitGroundTreshold = 0.6f;
 
     [SerializeField]
-    private float shakeTreshold = 0.4f;
+    private float shakeTreshold = 0.3f;
 
     [SerializeField]
-    private float shakeAmount;
+    private float shakeAmount = 0.1f;
 
     [SerializeField]
-    private float shakeSpeed;
+    private float shakeSpeed = 0.2f;
 
     [SerializeField]
-    private float afterLandCameraShakeMultiply;
+    private float afterLandCameraShakeMultiply = 2;
 
     private float hitGroundSpeedVelocity;
 
     [SerializeField]
-    private float gravity = 0.001f;
+    private float gravity = 0.18f;
 
     private Vector3 moveDirection;
 
@@ -39,6 +59,14 @@ public class MoveCharacter : MonoBehaviour {
     CharacterController character;
 
     [SerializeField]
+    private float maxMoveNoiseTime = 30;
+
+    private float moveNoiseTimer;
+
+    [SerializeField]
+    private int baseMoveNoiseStrength = 7;
+
+    [SerializeField]
     private int jumpSoundStrength = 15;
 
     Noise noise;
@@ -46,37 +74,88 @@ public class MoveCharacter : MonoBehaviour {
     void Awake() {
         character = GetComponent<CharacterController>();
         noise = GetComponent<Noise>();
+
+        crouchingSpeedMultiplier = standingSizeY * crouchingSpeedMultiplier;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         if(!character.isGrounded) //in the air
         {
+            //aply gravity
             moveDirection.y -= gravity;
-            hitGroundSpeedVelocity += 1f;
+
+            //count the time in the air
+            hitGroundSpeedVelocity += 1 * Time.deltaTime;
         } else { //not in the air
-            if (hitGroundSpeedVelocity > fallingHitGroundSpeedVelocity) //just landed
+            if (hitGroundSpeedVelocity > fallingHitGroundTreshold) //just landed
             {
                 foreach (Camera camera in cameras) camera.GetComponent<CameraShake>().startCamShake(shakeAmount * afterLandCameraShakeMultiply, shakeSpeed);
+
                 noise.NoiseArea(jumpSoundStrength);
+
                 // the higher hitGroundSpeedVelocity is, the longer high that means 
                 if (hitGroundSpeedVelocity > maxFallTime) Destroy(this.gameObject);
-            } else { // already landed
-                if (Input.GetButton("Jump")) moveDirection.y = jumpSpeed;
 
-                //if you didnt jump and the positive value of horizontal or vertical input is higher than the shakeTreshold, shake each camera  this object.
-                else if (Mathf.Abs(Input.GetAxis("Horizontal")) > shakeTreshold || Mathf.Abs(Input.GetAxis("Vertical")) > shakeTreshold)
+            } else { // already landed
+                //speed value is used to store the current speed
+                float speedValue = baseSpeed;
+
+                //speed multiplier is used to change the speedValue when you sprint or you crouch, or when you walk normal it is 1
+                float speedMultiplier = 1;
+
+                //set the speedMultiplier to either run speed or crouch speed
+                if (Input.GetButton("Run")) speedMultiplier = runSpeedMultiply;
+                else if (Input.GetButtonDown("Crouch"))
+                {
+                    //make crouching the opposite of what it is now.
+                    crouching = !crouching;
+
+                    if (crouching) StartCoroutine(changeYSize(crouchingSpeedMultiplier));
+                    else StartCoroutine(changeYSize(standingSizeY));
+                }
+
+                else if(crouching) speedMultiplier = crouchSpeedMultiply;
+
+                else if (Input.GetButtonDown("Jump")) moveDirection.y = jumpSpeed;
+
+                //if the positive value of horizontal or vertical input is higher than the shakeTreshold, shake each camera  this object.
+                if (Mathf.Abs(Input.GetAxis("Horizontal")) > shakeTreshold || Mathf.Abs(Input.GetAxis("Vertical")) > shakeTreshold)
                 {
                     foreach (Camera camera in cameras)
                     {
-                        camera.GetComponent<CameraShake>().startCamShake(shakeAmount, shakeSpeed);
+                        camera.GetComponent<CameraShake>().startCamShake(shakeAmount * speedMultiplier, shakeSpeed / speedMultiplier);
+                    }
+
+                    //increase the timer when we are moving
+                    moveNoiseTimer += 1 * Time.deltaTime;
+
+                    //if the timer is higher then then maxMoveNoise
+                    if (moveNoiseTimer > maxMoveNoiseTime)
+                    {
+                        noise.NoiseArea(baseMoveNoiseStrength * speedMultiplier);
+                        moveNoiseTimer = 0;
                     }
                 }
+
                 //move using the Horizontal or Vertical values of input and multiplying them by speed
-                moveDirection = transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), moveDirection.y, Input.GetAxis("Vertical"))) * speed;
+                moveDirection = transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal") * (speedValue * speedMultiplier), moveDirection.y, Input.GetAxis("Vertical") * (speedValue * speedMultiplier)));
             }
             hitGroundSpeedVelocity = 0;
         }
-        character.Move(moveDirection);
+        character.Move(moveDirection * Time.deltaTime);
+    }
+
+    private IEnumerator changeYSize(float yToMoveTo)
+    {
+        float nextYSize;
+        while (Mathf.Abs(transform.localScale.y - yToMoveTo) > 0.01f)
+        {
+            nextYSize = Mathf.SmoothDamp(transform.localScale.y, yToMoveTo, ref resizeYVelocity, resizeYSpeed);
+            transform.localScale = new Vector3(transform.localScale.x, nextYSize, transform.localScale.z);
+            yield return new WaitForFixedUpdate();
+        }
+
+        print("end");
     }
 }

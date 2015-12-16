@@ -10,6 +10,8 @@ public class CameraShake : MonoBehaviour {
 
     private bool shaking;
 
+    private bool crouching;
+
     private Transform charTransform;
 
     void Awake() {

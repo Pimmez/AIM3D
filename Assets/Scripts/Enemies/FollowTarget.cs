@@ -15,8 +15,12 @@ public class FollowTarget : CheckForTarget {
 
     private GoToPointSmooth goToPointSmooth;
 
-    void Start()
+    private AudioSource seeTargetSound;
+
+    protected override void Awake()
     {
+        base.Awake();
+
         agent = GetComponent<NavMeshAgent>();
 
         //set the navmesh speed
@@ -26,26 +30,39 @@ public class FollowTarget : CheckForTarget {
         agent.enabled = false;
 
         goToPointSmooth = GetComponent<GoToPointSmooth>();
+
+        //get all audiosource components on this object, save them in a array
+        AudioSource[] audioSources = GetComponents<AudioSource>();
+
+        //assign the sound we play when we see our target (2nd audiosource) to seeTargetSound
+        seeTargetSound = audioSources[1];
     }
 
     public override void SeeTarget(Transform _targetTransform)
     {
         base.SeeTarget(_targetTransform);
 
-        //stop patrolling
-        goToPointSmooth.setPatrolling(false);
+        //if see target, this is the first time the player is detected since patrolling.
+        if (!seeTarget)
+        {
+            //play sound
+            seeTargetSound.Play();
 
-        //set seetarget true, so the target transform updates as long as see target is true
-        seeTarget = true;
+            //stop patrolling
+            goToPointSmooth.setPatrolling(false);
 
-        //follow the target
-        agent.enabled = true;
+            //set seetarget true, so the target transform updates as long as see target is true
+            seeTarget = true;
 
-        //stop the coroutine that updates the target position in the navmesh
-        StartCoroutine(UpdateTargetTranformInNavmesh(_targetTransform));
+            //follow the target
+            agent.enabled = true;
+
+            //stop the coroutine that updates the target position in the navmesh
+            StartCoroutine(UpdateTargetTranformInNavmesh(_targetTransform));
+        }
     }
 
-    protected override void LoseCurrentTarget()
+    public override void LoseCurrentTarget()
     {
         base.LoseCurrentTarget();
 

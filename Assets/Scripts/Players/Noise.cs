@@ -12,6 +12,7 @@ public class Noise : MonoBehaviour {
             // if the distance between the player and the enemy is lower then the strenght of the sound, the enemy heard the player.
             if (Vector3.Distance(transform.position, enemy.transform.position) < _soundStrength) {
                 enemy.GetComponent<FollowTarget>().SeeTarget(gameObject.transform);
+                print("noise");
             }
         }
     }
