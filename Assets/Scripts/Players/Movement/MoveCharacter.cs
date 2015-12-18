@@ -12,18 +12,14 @@ public class MoveCharacter : MonoBehaviour {
     [SerializeField]
     private float crouchSpeedMultiply = 0.5f;
 
-    [SerializeField]
-    private float resizeYSpeed = 0.1f;
-
-    private float resizeYVelocity;
-
     private bool crouching;
 
-    [SerializeField]
     private float standingSizeY = 1;
 
     [SerializeField]
     private float crouchingSpeedMultiplier = 0.66f;
+
+    private Crouch crouch;
 
     [SerializeField]
     private float jumpSpeed = 6;
@@ -72,8 +68,11 @@ public class MoveCharacter : MonoBehaviour {
     Noise noise;
 
     void Awake() {
+        standingSizeY = transform.localScale.y;
+
         character = GetComponent<CharacterController>();
         noise = GetComponent<Noise>();
+        crouch = GetComponent<Crouch>();
 
         crouchingSpeedMultiplier = standingSizeY * crouchingSpeedMultiplier;
     }
@@ -108,11 +107,14 @@ public class MoveCharacter : MonoBehaviour {
                 if (Input.GetButton("Run")) speedMultiplier = runSpeedMultiply;
                 else if (Input.GetButtonDown("Crouch"))
                 {
-                    //make crouching the opposite of what it is now.
-                    crouching = !crouching;
+                    if (!crouch.GetChangingCrouch)
+                    {
+                        if (crouching) crouch.ChangeCrouchState(standingSizeY);
+                        else crouch.ChangeCrouchState(crouchingSpeedMultiplier);
 
-                    if (crouching) StartCoroutine(changeYSize(crouchingSpeedMultiplier));
-                    else StartCoroutine(changeYSize(standingSizeY));
+                        //make crouching the opposite of what it is now.
+                        crouching = !crouching;
+                    }
                 }
 
                 else if(crouching) speedMultiplier = crouchSpeedMultiply;
@@ -144,18 +146,5 @@ public class MoveCharacter : MonoBehaviour {
             hitGroundSpeedVelocity = 0;
         }
         character.Move(moveDirection * Time.deltaTime);
-    }
-
-    private IEnumerator changeYSize(float yToMoveTo)
-    {
-        float nextYSize;
-        while (Mathf.Abs(transform.localScale.y - yToMoveTo) > 0.01f)
-        {
-            nextYSize = Mathf.SmoothDamp(transform.localScale.y, yToMoveTo, ref resizeYVelocity, resizeYSpeed);
-            transform.localScale = new Vector3(transform.localScale.x, nextYSize, transform.localScale.z);
-            yield return new WaitForFixedUpdate();
-        }
-
-        print("end");
     }
 }
