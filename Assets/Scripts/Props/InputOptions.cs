@@ -3,44 +3,44 @@ using System.Collections;
 
 public class InputOptions : CheckIfInCamera {
 	
-	private bool pressed;
+	private bool canPress;
 
+	//When object is visible activited StartCoroutine
 	protected override void Visible ()
 	{
-		print ("Visable");
 		base.Visible ();
-		if(!pressed)StartCoroutine (WaitForInput());
-
+		if (!canPress)
+		{
+			//sets the boolean to true when its visible
+			canPress = true;
+			StartCoroutine(WaitForInput());
+		}
 	}
-
+	
 	protected override void NotVisible ()
 	{
-		print ("NotVisable");
+		//When its not visible the coroutine cant be used
 		base.NotVisible ();
-		pressed = false;
+		canPress = false;
+		StopAllCoroutines();
 	}
-
+	
 	protected virtual void GetInput()
 	{
-
+		
 	}
 
+	//IEnumerator  that will give you the input, the boolean will automaticly set false when its over.
 	IEnumerator WaitForInput()
 	{
-		print ("Waitforinput");
-
-		while (!pressed) 
+		while (canPress) 
 		{
-			//print ("While false");
-
-			if(Input.GetKeyDown("e"))
+			if (Input.GetKeyDown("m"))
 			{
-				print ("pressed");
-
-				pressed = true;
 				GetInput();
 			}
-		}
 			yield return null;
+		}
+		canPress = false;
 	}
 }
