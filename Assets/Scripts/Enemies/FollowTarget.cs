@@ -72,8 +72,12 @@ public class FollowTarget : CheckForTarget {
             //stop the coroutine that updates the target position in the navmesh
             seeTarget = false;
 
-            //set the navmesh target to the last waypoint
-            agent.destination = goToPointSmooth.Point;
+            if (goToPointSmooth.Point != new Vector3(0,0,0)) {//set the navmesh target to the last waypoint
+                agent.destination = goToPointSmooth.Point;
+            }
+            else {//else the monster wil be destroyed.
+                DestroyMyself();
+            }
 
             //going back to the last waypoint
             StartCoroutine(GoToPoint());

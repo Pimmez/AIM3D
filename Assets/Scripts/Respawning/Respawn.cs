@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Respawn : MonoBehaviour {
 
@@ -7,10 +6,22 @@ public class Respawn : MonoBehaviour {
     private Transform spawnPoint;
 
     public  void GoToSpawnPoint() {
-        //reset my location to the spawnpoint
-        transform.position = spawnPoint.position;
+        //if there is a spawnpoint avaible
+        if (spawnPoint != null)
+        {
+            //reset my location to the spawnpoint
+            transform.position = spawnPoint.position;
 
-        //if i have a go to point smooth component, update my position in gotopoint smooth
-        if(GetComponent<GoToPointSmooth>()) GetComponent<GoToPointSmooth>().UpdatePostion();
+            //if i have a go to point smooth component, update my position in gotopoint smooth
+            if (GetComponent<GoToPointSmooth>()) GetComponent<GoToPointSmooth>().UpdatePostion();
+        }
+        //destroy the object if not
+        else {
+            //GetComponent<CheckForTarget>().RemoveFromSoundList(GetComponent<CheckForTarget>().Target);
+
+            GetComponent<CheckForTarget>().DestroyMyself();
+
+            Destroy(gameObject);
+        }
     }
 }

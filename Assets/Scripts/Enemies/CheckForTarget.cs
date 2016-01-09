@@ -2,8 +2,8 @@
 
 public class CheckForTarget : WaitForCheck
 {
-    //[SerializeField]
-    //protected LayerMask checkLayer; //which layer we checks
+    [SerializeField]
+    protected string checkTag = "Player"; // which tag is the target
 
     [SerializeField]
     private float seeRange; // how far i can spot the target
@@ -34,7 +34,7 @@ public class CheckForTarget : WaitForCheck
     }
 
     void OnTriggerStay(Collider other) {
-        if (other.CompareTag("Player") && !targetInRange)
+        if (other.CompareTag(checkTag) && !targetInRange)
         {
             // the target in our range gets stored in target variable.
             target = other.gameObject;
@@ -48,14 +48,19 @@ public class CheckForTarget : WaitForCheck
     }
 
     void OnTriggerExit(Collider other) {
-        if (other.CompareTag("Player") && targetInRange)
+        if (other.CompareTag(checkTag) && targetInRange)
         {
             // remove myself from the targets noise list (the targets sound can no longer reach me)
-            other.GetComponentInParent<Noise>().enemiesThatCanHearMe.Remove(gameObject);
+            RemoveFromNoiseList(other.gameObject);
 
             //stop checking the sight for the target until the he is in our range again, we keep following until the outOfSightTime is over.
             targetInRange = false;
         }
+    }
+
+    public void RemoveFromNoiseList(GameObject plr) {
+        // remove myself from the targets noise list (the targets sound can no longer reach me)
+        plr.GetComponentInParent<Noise>().enemiesThatCanHearMe.Remove(gameObject);
     }
 
     protected override void Check()
@@ -68,32 +73,6 @@ public class CheckForTarget : WaitForCheck
         // if the target is in range (we will never see the target if it isnt in our range)
         if (targetInRange)
         {
-
-            /*
-            // make a vector that stores the distance from myself and the target
-            Vector3 direction = target.transform.position - transform.position;
-            // calculate the angle between the target and our sight (we look forward).
-            float angle = Vector3.Angle(direction, transform.forward);
-
-            // if the angle is in our field of view
-            if (angle < fieldOfView * 0.5f)
-            {
-                RaycastHit hit;
-
-                if (Physics.Raycast(transform.position + transform.up, direction.normalized, out hit, seeRange))
-                {
-                    //if hit is the target and not something else
-                    if (hit.collider.gameObject == target)
-                    {
-                        //activate the 
-                        SeeTarget(target.transform);
-
-                        seeTarget = true;
-                    }
-                }
-            }
-            */
-
             if (raycastSight.CheckRaycastSight(transform, target.transform, fieldOfView, seeRange)) {
                 seeTarget = true;
                 SeeTarget(target.transform);
@@ -115,6 +94,18 @@ public class CheckForTarget : WaitForCheck
 
     public virtual void LoseCurrentTarget() {
 
+    }
+
+    public GameObject Target {
+        get { return target; }
+    }
+
+    public void DestroyMyself() {
+        //remove myself from player sound list
+        RemoveFromNoiseList(GetComponent<CheckForTarget>().Target);
+
+        //then destroy the gameobject
+        Destroy(gameObject);
     }
 
     void OnDrawGizmos()

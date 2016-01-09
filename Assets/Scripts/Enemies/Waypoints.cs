@@ -16,7 +16,7 @@ public class Waypoints : MonoBehaviour
     {
         // go to the first waypoint
         goToPointSmooth = GetComponent<GoToPointSmooth>();
-        goToPointSmooth.setPoint(waypoints[waypointIndex].position);
+        if(waypoints.Count > 0) goToPointSmooth.setPoint(waypoints[waypointIndex].position);
     }
 
     void Update()
