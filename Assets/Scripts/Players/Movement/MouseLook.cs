@@ -28,7 +28,7 @@ public class MouseLook : MonoBehaviour {
         character = transform.parent;
 		Cursor.visible = false;
 	}
-	
+
 	// Update is called once per frame
 	void FixedUpdate () {
         yRotation += Input.GetAxis("Mouse X") * lookSensitivity;

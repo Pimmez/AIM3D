@@ -51,6 +51,7 @@ public class MoveCharacter : MonoBehaviour {
                 foreach (Camera camera in cameras) camera.GetComponent<CameraShake>().startCamShake(shakeAmount * afterLandCameraShakeMultiply, shakeSpeed);
                 if (hitGroundSpeedVelocity > maxFallDistance) Destroy(this.gameObject);
                 hitGroundSpeedVelocity = 0;
+
             } else { // already landed
             
                 hitGroundSpeedVelocity = 0;

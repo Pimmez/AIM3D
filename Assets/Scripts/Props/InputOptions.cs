@@ -22,7 +22,8 @@ public class InputOptions : CheckIfInCamera {
 		//When its not visible the coroutine cant be used
 		base.NotVisible ();
 		canPress = false;
-		StopAllCoroutines();
+		StopCoroutine("WaitForInput");
+
 	}
 	
 	protected virtual void GetInput()
@@ -33,10 +34,13 @@ public class InputOptions : CheckIfInCamera {
 	//IEnumerator  that will give you the input, the boolean will automaticly set false when its over.
 	IEnumerator WaitForInput()
 	{
+
 		while (canPress) 
 		{
 			if (Input.GetKeyDown("m"))
 			{
+				print ("Pressed Key");
+
 				GetInput();
 			}
 			yield return null;

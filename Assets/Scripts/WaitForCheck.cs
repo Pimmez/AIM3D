@@ -7,7 +7,8 @@ public class WaitForCheck : MonoBehaviour
 
     virtual protected void Awake()
     {
-        InvokeRepeating("Check", Random.Range(0, 0.99f), checkCooldown);
+		InvokeRepeating ("Check", Random.Range (0, 0.99f), checkCooldown);
+
     }
 
     virtual protected void Check()
@@ -17,9 +18,11 @@ public class WaitForCheck : MonoBehaviour
 
     protected void stopChecking() {
         CancelInvoke("Check");
+
     }
 
     protected void startChecking() {
         InvokeRepeating("Check", 0, checkCooldown);
+
     }
 }

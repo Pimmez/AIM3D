@@ -10,6 +10,8 @@ public class MoveObjects : ManaManagement {
 	private float smoothTime = 0f;
 	[SerializeField]
 	private GameObject obj;
+	[SerializeField]
+	private float minDistance = 0.5f;
 
 	//Void EnoughMana Only Activates when We have enough mana.
 	protected override void EnoughMana()
@@ -24,7 +26,7 @@ public class MoveObjects : ManaManagement {
 	IEnumerator moveObject(Vector3 goal)
 	{
 		Vector3 velocity = new Vector3();
-		while (Vector3.Distance(goal, obj.transform.position) > 0.5f) 
+		while (Vector3.Distance(goal, obj.transform.position) > minDistance) 
 		{
 			//Vector3 SmoothDamp(currentPos, endPos, ref Vector3 currentVelocity, smoothTime);
 			transform.position = Vector3.SmoothDamp (obj.transform.position, goal, ref velocity, smoothTime);
