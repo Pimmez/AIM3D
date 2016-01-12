@@ -4,19 +4,19 @@ using System.Collections.Generic;
 public class ObjectActiveState : MonoBehaviour {
 
     [SerializeField]
-    private List<GameObject> objsToMakeInactive;
+    private List<GameObject> objsToSwitchState;
 
     private bool isActive;
 
     public void SwitchState() {
-        isActive = !isActive;
-        foreach (GameObject obj in objsToMakeInactive) {
-            obj.SetActive(isActive);
+        foreach (GameObject obj in objsToSwitchState) {
+            obj.SetActive(!obj.activeSelf);
+            isActive = !obj.activeSelf;
         }
     }
 
     public void SetState(bool _state) {
-        foreach (GameObject obj in objsToMakeInactive)
+        foreach (GameObject obj in objsToSwitchState)
         {
             obj.SetActive(_state);
         }
@@ -28,6 +28,6 @@ public class ObjectActiveState : MonoBehaviour {
     }
 
     public void AddObjectToMakeInactive(GameObject _objToAdd) {
-        objsToMakeInactive.Add(_objToAdd);
+        objsToSwitchState.Add(_objToAdd);
     }
 }

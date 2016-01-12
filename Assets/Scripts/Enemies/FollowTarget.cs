@@ -15,12 +15,10 @@ public class FollowTarget : CheckForTarget {
 
     private GoToPointSmooth goToPointSmooth;
 
+    [SerializeField]
     private AudioSource seeTargetSound;
 
-    protected override void Awake()
-    {
-        base.Awake();
-
+    void Awake() {
         agent = GetComponent<NavMeshAgent>();
 
         //set the navmesh speed
@@ -30,12 +28,6 @@ public class FollowTarget : CheckForTarget {
         agent.enabled = false;
 
         goToPointSmooth = GetComponent<GoToPointSmooth>();
-
-        //get all audiosource components on this object, save them in a array
-        AudioSource[] audioSources = GetComponents<AudioSource>();
-
-        //assign the sound we play when we see our target (2nd audiosource) to seeTargetSound
-        seeTargetSound = audioSources[1];
     }
 
     public override void SeeTarget(Transform _targetTransform)

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CheckInput : CheckCameraVisible {
+public class CheckInput : CheckVisibility {
 
     [SerializeField]
     private GameObject particleEffect;
@@ -16,8 +16,8 @@ public class CheckInput : CheckCameraVisible {
 
 	private bool inView;
 
-	//When object is visible activited StartCoroutine
-	protected override void Visible ()
+    //When object is visible activited StartCoroutine
+    protected override void Visible ()
 	{
 		base.Visible ();
         //if the we were previously not in view, and we are usable, start checking for input
@@ -26,7 +26,8 @@ public class CheckInput : CheckCameraVisible {
             //sets the boolean to true when its visible
             inView = true;
 			StartCoroutine(WaitForInput());
-            particleEffect.SetActive(true);
+
+            //particleEffect.SetActive(true);
         }
 	}
 	
@@ -39,7 +40,7 @@ public class CheckInput : CheckCameraVisible {
         //stop waiting for a input
         StopCoroutine("WaitForInput");
 
-        particleEffect.SetActive(false);
+        //particleEffect.SetActive(false);
 	}
 	
 	protected virtual void InputRecieved()

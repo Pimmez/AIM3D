@@ -1,37 +1,55 @@
 ﻿using UnityEngine;
+using System.Collections;
 
-public class ManaCost : CheckInput {
+public class ManaCost : CheckVisibility {
 
     [SerializeField]
     private int manaCost = 15;
 
+    [SerializeField]
+    private GameObject ManaEffect;
+
+    [SerializeField]
+    private int NotEnoughManaEffectOffTime = 35;
+
 	private ManaBar currentMana;
 
-	protected override void Awake()
-	{
-        base.Awake();
-		currentMana = GameObject.Find ("ManaBar").GetComponent<ManaBar>();
-	}
+    [SerializeField]
+    private bool onlyUsableOnce;
 
-	//GetInput will be activated when you press a button (M in particular)
-	protected override void InputRecieved()
+    private bool usable = true;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        currentMana = GameObject.Find("ManaBar").GetComponent<ManaBar>();
+    }
+
+    //GetInput will be activated when you press a button (M in particular)
+    protected override void Visible()
 	{
-		base.InputRecieved();
+		base.Visible();
 
         //do a check if we have enough mana
         if (currentMana.UseMana(manaCost)) 
 		{
-            //if we can only use this object once, set useAble in check input false
-            if (onlyUsableOnce)
+            if (usable)
             {
-                useAble = false;
-            }
+                //if we can only use this object once, set useAble in check input false
+                if (onlyUsableOnce)
+                {
+                    usable = false;
 
-            EnoughMana ();
+                    ManaEffect.SetActive(false);
+                }
+
+                EnoughMana();
+            }
 		} 
 		else
 		{
 			print ("No Mana the object to move");
+            StartCoroutine(FlickerManaEffect());
 		}
 	}
 
@@ -39,4 +57,16 @@ public class ManaCost : CheckInput {
 	{
 
 	}
+
+    IEnumerator FlickerManaEffect()
+    {
+        ManaEffect.SetActive(false);
+
+        for (int i = NotEnoughManaEffectOffTime; i > 0; i--)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+
+        ManaEffect.SetActive(true);
+    }
 }

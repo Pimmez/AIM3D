@@ -5,10 +5,10 @@ public class WaitForCheck : MonoBehaviour
     [SerializeField]
     protected float checkCooldown = 0.5f;
 
-    virtual protected void Awake()
+    virtual protected void Start()
     {
         //call the function repeatetly
-        InvokeRepeating("Check", Random.Range(0, 0.99f), checkCooldown);
+        if(checkCooldown != 0) InvokeRepeating("Check", Random.Range(0, 0.99f), checkCooldown);
     }
 
     virtual protected void Check()

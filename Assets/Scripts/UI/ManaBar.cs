@@ -16,9 +16,9 @@ public class ManaBar : MonoBehaviour {
     [SerializeField]
     private float smoothTime = 1f;
 
-    private float velocity;
-
     private float startPosX;
+
+    private float velocity;
 
     void Start() {
         startPosX = transform.position.x - transform.localScale.x;

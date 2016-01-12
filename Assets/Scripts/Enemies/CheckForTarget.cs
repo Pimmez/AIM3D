@@ -24,9 +24,9 @@ public class CheckForTarget : WaitForCheck
 
     private RaycastSight raycastSight;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
         //adjust outofsight time to the ckeckcooldown
         outOfSightTime *= checkCooldown;
 

@@ -16,9 +16,9 @@ public class CheckCameraVisible : WaitForCheck
 
     private RaycastSight raycastSight;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
         raycastSight = GetComponent<RaycastSight>();
     }
 
