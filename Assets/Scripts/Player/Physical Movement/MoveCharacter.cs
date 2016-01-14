@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public class MoveCharacter : MonoBehaviour {
 
@@ -49,16 +48,12 @@ public class MoveCharacter : MonoBehaviour {
     [SerializeField]
     private GameObject playerCamera;
 
-    //private Shake cameraShake;
-
     [SerializeField]
     private GameObject hands;
 
     private Shake handsShake;
 
     private KeepScale keepHandsScale;
-
-    private GoDown handsGoDown;
 
     CharacterController character;
 
@@ -91,11 +86,8 @@ public class MoveCharacter : MonoBehaviour {
         noise = GetComponent<Noise>();
         crouch = GetComponent<Crouch>();
 
-        //cameraShake = playerCamera.GetComponent<Shake>();
-
         handsShake = hands.GetComponent<Shake>();
         keepHandsScale = hands.GetComponent<KeepScale>();
-        handsGoDown = hands.GetComponent<GoDown>();
 
         crouchSpeedMultiply = standingSizeY * crouchSpeedMultiply;
     }
@@ -114,7 +106,7 @@ public class MoveCharacter : MonoBehaviour {
         { //not in the air
             if (hitGroundSpeedVelocity > fallingHitGroundTreshold) //just landed
             {
-                ShakeObjs(afterLandCameraShakeMultiply, 1);
+                ShakeHands(afterLandCameraShakeMultiply, 1);
 
                 noise.NoiseArea(jumpSoundStrength);
 
@@ -153,7 +145,7 @@ public class MoveCharacter : MonoBehaviour {
                 //if the positive value of horizontal or vertical input is higher than the shakeTreshold, shake each camera  this object.
                 if (Mathf.Abs(Input.GetAxis("Horizontal")) > shakeTreshold || Mathf.Abs(Input.GetAxis("Vertical")) > shakeTreshold)
                 {
-                    ShakeObjs(speedMultiplier, speedMultiplier);
+                    ShakeHands(speedMultiplier, speedMultiplier);
 
                     MakeNoise(speedMultiplier);
 
@@ -178,35 +170,32 @@ public class MoveCharacter : MonoBehaviour {
         character.Move(moveDirection * Time.deltaTime);
     }
 
-    private void ShakeObjs(float _multiplyAmount, float _divideTime) {
-        if (!crouching)
-        {
-            handsShake.StartShake(shakeAmount * _multiplyAmount, shakeTime / _divideTime);
-        }
+    private void ShakeHands(float _multiplyAmount, float _divideTime) {
+        handsShake.StartShake(shakeAmount * _multiplyAmount, shakeTime / _divideTime);
     }
 
     //switches the crouch state to the value that it is given in the parameters
     private void switchCrouch(bool _currentCrouchingState) {
-        if (!crouch.GetChangingCrouch && !handsGoDown.Going)
+        if(!crouch.GetChangingCrouch)
         {
-            handsShake.StopShake();
+            //switch crouching boolean
+            crouching = _currentCrouchingState;
+
+            ShakeHands(1, 1);
 
             //make variable in which we store the new Size the player is going to be resized to.
             float newSizeY;
             //crouch speed multiply is also used for the new player size
-            if (!crouching) newSizeY = crouchSpeedMultiply;
+            if (crouching) newSizeY = crouchSpeedMultiply;
             else newSizeY = standingSizeY;
 
-            if (crouch.CheckIfCanCrouch(newSizeY))
+            if (crouch.CheckIfCanCrouch(crouching))
             {
                 keepHandsScale.StartKeepHeightScale(newSizeY);
-                handsGoDown.StartMoving(crouching);
+                handsShake.SwitchOffSet(crouching);
 
                 //resizes the player to the new size
                 crouch.ChangeCrouchState(newSizeY);
-
-                //switch crouching boolean
-                crouching = _currentCrouchingState;
             }
         }
     }

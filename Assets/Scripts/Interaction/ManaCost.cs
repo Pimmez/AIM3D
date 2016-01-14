@@ -30,10 +30,10 @@ public class ManaCost : CheckVisibility {
 	{
 		base.Visible();
 
-        //do a check if we have enough mana
-        if (currentMana.UseMana(manaCost)) 
-		{
-            if (usable)
+        if (usable)
+        {
+            //do a check if we have enough mana, if true we decrement the mana at the same tim
+            if (currentMana.UseMana(manaCost))
             {
                 //if we can only use this object once, set useAble in check input false
                 if (onlyUsableOnce)
@@ -42,15 +42,14 @@ public class ManaCost : CheckVisibility {
 
                     ManaEffect.SetActive(false);
                 }
-
                 EnoughMana();
             }
-		} 
-		else
-		{
-			print ("No Mana the object to move");
-            StartCoroutine(FlickerManaEffect());
-		}
+            else
+            {
+                print("No Mana the object to move");
+                StartCoroutine(FlickerManaEffect());
+            }
+        }
 	}
 
 	protected virtual void EnoughMana()

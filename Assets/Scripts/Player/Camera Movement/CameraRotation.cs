@@ -3,10 +3,10 @@
 public class CameraRotation : MonoBehaviour
 {
     [SerializeField]
-    private string inputHorizontal = "Look X";
+    private string inputHorizontal = "Mouse X";
 
     [SerializeField]
-    private string inputVertical = "Look Y";
+    private string inputVertical = "Mouse Y";
 
     private bool rotateVertical = true;
 
@@ -63,7 +63,4 @@ public class CameraRotation : MonoBehaviour
         character.transform.rotation = Quaternion.Euler(0, currentYRotation, 0);
         transform.rotation = Quaternion.Euler(-currentXRotation, currentYRotation, 0);
     }
-
-
-
 }

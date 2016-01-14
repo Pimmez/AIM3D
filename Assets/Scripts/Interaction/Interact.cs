@@ -20,6 +20,6 @@ public class Interact : MonoBehaviour {
                     rayHit.transform.GetComponent<CheckVisibility>().PlayerLooksInMyDirection(transform,interactDistance);
                 }
 			}
-		}
+        }
 	}
 }

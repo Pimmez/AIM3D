@@ -17,29 +17,15 @@ public class Crouch : MonoBehaviour {
     bool changingCrouch;
 
     public void ChangeCrouchState(float _ySize) {
-        /*
-        //if we are smaller then the _YSize, we are standing up and we need to check if there is something above is so we dont get stuck in it.
-        if (_ySize > transform.localScale.y) {
-            Vector3 rayEnd = transform.TransformDirection(Vector3.up);
-            //check with a raycast if there is something above us.
-            if (!Physics.Raycast(transform.position, rayEnd, upwardsSaveZoneLength))
-            {
-                StartCoroutine(changeYSize(_ySize));
-            }
-        }
-        //else we are crouching and dont need to check anything
-        else StartCoroutine(changeYSize(_ySize));
-        */
-
         StartCoroutine(changeYSize(_ySize));
     }
 
-    public bool CheckIfCanCrouch(float _ySize)
+    public bool CheckIfCanCrouch(bool _goCrouching)
     {
         bool returnVal = true;
         //if we are smaller then the _ySize, we are standing up and we need to check if there is something above is so we dont get stuck in it.
         //else we are crouching which is always possible
-        if (_ySize > transform.localScale.y)
+        if (!_goCrouching)
         {
             Vector3 rayEnd = transform.TransformDirection(Vector3.up);
             //check with a raycast if there is something above us.

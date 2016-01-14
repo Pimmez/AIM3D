@@ -9,20 +9,19 @@ public class ManaBar : MonoBehaviour {
     [SerializeField]
     private int manaStartValue = 25;
 
+    [SerializeField]
     private float currentManaVal;
 
     private float oldBarSizeX;
 
+    private float barSizeX = 0;
+
     [SerializeField]
     private float smoothTime = 1f;
-
-    private float startPosX;
 
     private float velocity;
 
     void Start() {
-        startPosX = transform.position.x - transform.localScale.x;
-
         ChangeMana(manaStartValue);
     }
 
@@ -46,7 +45,7 @@ public class ManaBar : MonoBehaviour {
     public void ChangeMana(float change) {
 
         //we save the old mana value
-        oldBarSizeX = currentManaVal;
+        oldBarSizeX = currentManaVal * 0.3f;
 
         //if the new value will become wont become too low
         if (currentManaVal + change > 0)
@@ -81,16 +80,17 @@ public class ManaBar : MonoBehaviour {
 	{
         if (oldBarSizeX != currentManaVal)
         {
+            //float oldBarX = oldBarSizeX / maxMana * 4;
+            //float newBarX = currentManaVal / maxMana * 4;
+
             //assign the new scale
             transform.localScale = new Vector3(
                 //smooth the size to the difference between old mana and current mana.
-                oldBarSizeX = Mathf.SmoothDamp(oldBarSizeX, currentManaVal, ref velocity, smoothTime),
+                oldBarSizeX = Mathf.SmoothDamp(oldBarSizeX, currentManaVal, ref velocity, smoothTime) * 0.3f,
                 transform.localScale.y,
                 transform.localScale.z
             );
-
-            //relocate the bar so that it only grows to the right
-            //transform.position = new Vector3((transform.localScale.x * 5 ) + startPosX, transform.position.y, transform.position.z);
+            print(oldBarSizeX);
         }
     }
 
