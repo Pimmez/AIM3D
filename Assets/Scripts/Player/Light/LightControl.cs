@@ -73,6 +73,8 @@ public class LightControl : MonoBehaviour
         //if we can switch the light and we pressed the button
         if (Input.GetButtonDown("Light") && canSwitch && manaBar.CurrentManaVal > 0)
         {
+            print("hello");
+
             //anim.Play("Spell");
             anim.SetTrigger("Interact");
             //anim.SetBool("Interact", false);

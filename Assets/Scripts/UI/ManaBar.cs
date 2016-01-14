@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ManaBar : MonoBehaviour {
+public class ManaBar : MonoBehaviour
+{
 
     [SerializeField]
     private float maxMana = 50;
@@ -9,43 +10,46 @@ public class ManaBar : MonoBehaviour {
     [SerializeField]
     private int manaStartValue = 25;
 
-    [SerializeField]
     private float currentManaVal;
 
     private float oldBarSizeX;
 
-    private float barSizeX = 0;
-
     [SerializeField]
     private float smoothTime = 1f;
 
+    private float startPosX;
+
     private float velocity;
 
-    void Start() {
+    void Start()
+    {
+        startPosX = transform.position.x - transform.localScale.x;
+
         ChangeMana(manaStartValue);
     }
 
-	public bool UseMana(float _manaCost) 
-	{
-		//If The cost of the object is lower then the current mana we have, only then you can go through.
-		if (currentManaVal >= _manaCost)
-		{
+    public bool UseMana(float _manaCost)
+    {
+        //If The cost of the object is lower then the current mana we have, only then you can go through.
+        if (currentManaVal >= _manaCost)
+        {
             ChangeMana(-_manaCost);
 
-			return true;
-		}
-		else
-		{	
-			//When there is not enough mana.
-			print ("No Mana Available");
-			return false;
-		}
-	}
+            return true;
+        }
+        else
+        {
+            //When there is not enough mana.
+            print("No Mana Available");
+            return false;
+        }
+    }
 
-    public void ChangeMana(float change) {
+    public void ChangeMana(float change)
+    {
 
         //we save the old mana value
-        oldBarSizeX = currentManaVal * 0.3f;
+        oldBarSizeX = currentManaVal;
 
         //if the new value will become wont become too low
         if (currentManaVal + change > 0)
@@ -56,45 +60,46 @@ public class ManaBar : MonoBehaviour {
                 //change the current value
                 currentManaVal += change;
             } // else it will be the same as maxMana
-            else {
+            else
+            {
                 currentManaVal = maxMana;
             }
         } // else it will be 0
-        else {
+        else
+        {
             currentManaVal = 0;
         }
     }
 
-    private void SetMana(float newManaValue) {
+    private void SetMana(float newManaValue)
+    {
         //we save the old mana value
         oldBarSizeX = currentManaVal;
 
         currentManaVal = newManaValue;
     }
 
-    public void ResetMana() {
+    public void ResetMana()
+    {
         SetMana(manaStartValue);
     }
 
-	void FixedUpdate()
-	{
+    void FixedUpdate()
+    {
         if (oldBarSizeX != currentManaVal)
         {
-            //float oldBarX = oldBarSizeX / maxMana * 4;
-            //float newBarX = currentManaVal / maxMana * 4;
-
             //assign the new scale
             transform.localScale = new Vector3(
                 //smooth the size to the difference between old mana and current mana.
-                oldBarSizeX = Mathf.SmoothDamp(oldBarSizeX, currentManaVal, ref velocity, smoothTime) * 0.3f,
+                oldBarSizeX = Mathf.SmoothDamp(oldBarSizeX, currentManaVal, ref velocity, smoothTime),
                 transform.localScale.y,
                 transform.localScale.z
             );
-            print(oldBarSizeX);
         }
     }
 
-    public void StartManaDraining(float _costPerFrame) {
+    public void StartManaDraining(float _costPerFrame)
+    {
         StartCoroutine(DrainMana(_costPerFrame));
     }
 
@@ -109,7 +114,8 @@ public class ManaBar : MonoBehaviour {
         yield return new WaitForFixedUpdate();
     }
 
-    public float CurrentManaVal {
+    public float CurrentManaVal
+    {
         get { return currentManaVal; }
     }
 
