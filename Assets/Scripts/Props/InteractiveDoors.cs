@@ -9,16 +9,16 @@ public class InteractiveDoors : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		//on mouse click, you open the doors in a radius of 5f.
-		if (Input.GetKeyDown (KeyCode.Mouse0)) 
+		//on mouse click, you open the doors.
+		if (Input.GetKeyDown (KeyCode.E)) 
 		{
 			Ray ray = new Ray(transform.position, transform.forward);
-			RaycastHit hit;
-			if(Physics.Raycast(ray, out hit, interactDistance))
+			RaycastHit rayHit;
+			if(Physics.Raycast(ray, out rayHit, interactDistance))
 			{
-				if(hit.collider.CompareTag("Door"))
+				if(rayHit.collider.CompareTag("Door"))
 				{
-					hit.collider.transform.parent.GetComponent<Doors>().ChangeDoorState();
+					rayHit.collider.transform.parent.GetComponent<Doors>().DoorAngle();
 				}
 			}
 		}
